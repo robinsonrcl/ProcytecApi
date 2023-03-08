@@ -17,16 +17,8 @@ public func configure(_ app: Application) throws {
     let corsConfiguration = CORSMiddleware.Configuration(
         //allowedOrigin: .all,
       allowedOrigin: .any(["http://localhost:5173",
-                              "https://bitacorafluvial.com",
-                              "https://bitacorafluvial.com:82"]),
-      
-//            .any(["http://localhost:8080",
-//                            "http://localhost:3333",
-//                            "https://virtualidad.usbmed.edu.co",
-//                            "http://localhost:8081",
-//                            "http://localhost:8082",
-//                            "http://localhost:8083"]),
-      
+                              "https://conecta.procytec.com.co",
+                              "https://conecta.procytec.com.co:82"]),
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
         allowedHeaders: [.accept,
                          .authorization,
@@ -81,39 +73,15 @@ public func configure(_ app: Application) throws {
                 database: Environment.get("DATABASE_NAME") ?? databaseName
         ), as: .psql)
     }
-    
-    // Configuración de Redis
-    let redisHostname = Environment.get("REDIS_HOSTNAME") ?? "localhost"
-    let redisConfig = try RedisConfiguration(hostname: redisHostname)
-    
-    app.redis.configuration = redisConfig
-    //-----
 
-  app.migrations.add(CreateUser())
-  app.migrations.add(CreateContrato())
-  app.migrations.add(CreateCorriente())
-  app.migrations.add(CreateHallazgo())
-  app.migrations.add(CreateComponente())
-  app.migrations.add(CreateEstado())
-  app.migrations.add(CreateFoto())
-  app.migrations.add(CreateRevisor())
-  app.migrations.add(CreateHallazgoRevisorPivot())
-  app.migrations.add(CreateHallazgoFotoPivot())
-  app.migrations.add(AddIcono())
-  app.migrations.add(AddColorestado())
-  app.migrations.add(AddConsecutivo())
-    
-//    app.databases.middleware.use(UserMiddleware(), on: .psql)
+  app.migrations.add(CreateCustomer())
+  app.migrations.add(CreateNote())
 
-    app.logger.logLevel = .debug
-    
-    try app.autoMigrate().wait()
-    
-    app.sessions.use(.redis)
-
-    app.sendgrid.initialize()
-    
-    try routes(app)
+  app.logger.logLevel = .debug
+  
+  try app.autoMigrate().wait()
+  
+  try routes(app)
     
 }
 
